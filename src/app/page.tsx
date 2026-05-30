@@ -96,6 +96,7 @@ export default function Home() {
     setLocationLoading(true);
     setLocationError(null);
 
+    // Try high accuracy first, with a short timeout of 3.5 seconds
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -106,15 +107,31 @@ export default function Home() {
         setLocationLoading(false);
       },
       (error) => {
-        console.error("Geolocation error:", error);
-        let errorMsg = "Unable to retrieve your location.";
-        if (error.code === error.PERMISSION_DENIED) {
-          errorMsg = "Location access denied. Please enable GPS permissions in your browser.";
-        }
-        setLocationError(errorMsg);
-        setLocationLoading(false);
+        console.warn("High accuracy geolocation failed or timed out. Falling back to low accuracy for laptop...", error);
+        
+        // Immediately fallback to low accuracy Wi-Fi/IP based retrieval (very robust on laptops/desktops)
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            const coords: [number, number] = [latitude, longitude];
+            setUserLocation(coords);
+            setMapCenter(coords);
+            setMapZoom(11);
+            setLocationLoading(false);
+          },
+          (err) => {
+            console.error("Graceful fallback location also failed:", err);
+            let errorMsg = "Unable to retrieve your coordinates automatically. Laptops without GPS require browser location permissions enabled.";
+            if (err.code === err.PERMISSION_DENIED) {
+              errorMsg = "Location access denied. Please enable location permissions in your browser.";
+            }
+            setLocationError(errorMsg);
+            setLocationLoading(false);
+          },
+          { enableHighAccuracy: false, timeout: 8000 }
+        );
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 3500 }
     );
   };
 
@@ -174,6 +191,8 @@ export default function Home() {
             t.moolnayak.toLowerCase().includes(query) ||
             t.city.toLowerCase().includes(query) ||
             t.state.toLowerCase().includes(query) ||
+            t.address.toLowerCase().includes(query) ||
+            t.trust_name.toLowerCase().includes(query) ||
             t.history.toLowerCase().includes(query)
         );
       }
@@ -289,15 +308,22 @@ export default function Home() {
     },
   ];
 
-  // Predefined State counts for directory grid
-  const stateShortcuts = [
-    { name: "Madhya Pradesh", temples: 5, color: "from-amber-500/10 to-orange-500/10 border-amber-200" },
-    { name: "Rajasthan", temples: 4, color: "from-red-500/10 to-rose-500/10 border-rose-200" },
-    { name: "Gujarat", temples: 3, color: "from-emerald-500/10 to-teal-500/10 border-teal-200" },
-    { name: "Karnataka", temples: 2, color: "from-blue-500/10 to-indigo-500/10 border-blue-200" },
-    { name: "Delhi", temples: 1, color: "from-cyan-500/10 to-sky-500/10 border-cyan-200" },
-    { name: "Uttar Pradesh", temples: 1, color: "from-purple-500/10 to-fuchsia-500/10 border-purple-200" },
-  ];
+  // Dynamic State counts for directory grid calculated from live catalog
+  const stateShortcuts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    temples.forEach((t) => {
+      counts[t.state] = (counts[t.state] || 0) + 1;
+    });
+
+    return [
+      { name: "Madhya Pradesh", temples: counts["Madhya Pradesh"] || 0, color: "from-amber-500/10 to-orange-500/10 border-amber-200" },
+      { name: "Rajasthan", temples: counts["Rajasthan"] || 0, color: "from-red-500/10 to-rose-500/10 border-rose-200" },
+      { name: "Gujarat", temples: counts["Gujarat"] || 0, color: "from-emerald-500/10 to-teal-500/10 border-teal-200" },
+      { name: "Karnataka", temples: counts["Karnataka"] || 0, color: "from-blue-500/10 to-indigo-500/10 border-blue-200" },
+      { name: "Delhi", temples: counts["Delhi"] || 0, color: "from-cyan-500/10 to-sky-500/10 border-cyan-200" },
+      { name: "Uttar Pradesh", temples: counts["Uttar Pradesh"] || 0, color: "from-purple-500/10 to-fuchsia-500/10 border-purple-200" },
+    ];
+  }, [temples]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -353,10 +379,10 @@ export default function Home() {
 
       {/* Splitscreen Interactive discovery dashboard */}
       <section id="discover-section" className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-12 flex-grow">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto lg:h-[750px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto">
           
           {/* Left panel: Filters (1/3 cols on desktop) and List */}
-          <div className="lg:col-span-4 flex flex-col space-y-6">
+          <div className="lg:col-span-7 flex flex-col space-y-6">
             <Filters
               onFilterChange={setActiveFilters}
               availableStates={states}
@@ -398,8 +424,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right panel: Sticky map layout (2/3 cols on desktop) */}
-          <div className="lg:col-span-8 h-[400px] lg:h-full sticky top-20 z-10">
+          {/* Right panel: Sticky map layout (medium sized floating widget, sticky beside the entire list) */}
+          <div className="lg:col-span-5 h-[400px] lg:h-[550px] sticky top-24 z-10 rounded-3xl overflow-hidden border border-glass-border shadow-lg">
             <Map
               temples={filteredAndSortedTemples}
               center={mapCenter}

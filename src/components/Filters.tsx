@@ -269,12 +269,12 @@ export default function Filters({
           {facilityLabels.map((f) => {
             const isChecked = filters.facilities[f.key];
             return (
-              <label
+              <div
                 key={f.key}
-                className="flex items-center gap-3 cursor-pointer group text-xs text-foreground font-semibold py-0.5"
+                onClick={() => handleFacilityToggle(f.key)}
+                className="flex items-center gap-3 cursor-pointer group text-xs text-foreground font-semibold py-0.5 select-none"
               >
                 <div
-                  onClick={() => handleFacilityToggle(f.key)}
                   className={`flex h-4.5 w-4.5 items-center justify-center rounded border transition-all ${
                     isChecked
                       ? "bg-saffron-500 border-saffron-500 text-white"
@@ -283,10 +283,10 @@ export default function Filters({
                 >
                   {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
                 </div>
-                <span className="select-none text-cream-900 group-hover:text-saffron-600 transition-colors font-medium">
+                <span className="text-cream-900 group-hover:text-saffron-600 transition-colors font-medium">
                   {f.label}
                 </span>
-              </label>
+              </div>
             );
           })}
         </div>
