@@ -69,6 +69,8 @@ function ContributeForm() {
   const [trustName, setTrustName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
+  const [googleMapsLink, setGoogleMapsLink] = useState("");
+
   // Facility Flags
   const [facilities, setFacilities] = useState<Facilities>({
     dharamshala_available: false,
@@ -158,6 +160,65 @@ function ContributeForm() {
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const handleSmartImport = () => {
+    if (!googleMapsLink.trim()) {
+      alert("Please paste a Google Maps link first.");
+      return;
+    }
+
+    let detectedLat = "";
+    let detectedLng = "";
+
+    // Pattern 1: /@22.7196,75.8480
+    const atPattern = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    const atMatch = googleMapsLink.match(atPattern);
+    if (atMatch) {
+      detectedLat = atMatch[1];
+      detectedLng = atMatch[2];
+    } else {
+      // Pattern 2: q=22.7196,75.8480
+      const qPattern = /[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+      const qMatch = googleMapsLink.match(qPattern);
+      if (qMatch) {
+        detectedLat = qMatch[1];
+        detectedLng = qMatch[2];
+      } else {
+        // Pattern 3: direct comma separated numbers in url
+        const numberPattern = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+        const numMatch = googleMapsLink.match(numberPattern);
+        if (numMatch) {
+          detectedLat = numMatch[1];
+          detectedLng = numMatch[2];
+        }
+      }
+    }
+
+    if (detectedLat && detectedLng) {
+      setLat(parseFloat(detectedLat).toFixed(5));
+      setLng(parseFloat(detectedLng).toFixed(5));
+      
+      // Auto generate the real satellite photo URL for this location
+      const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${detectedLng},${detectedLat}&z=17&l=sat&size=600,450`;
+      setImageUrl(generatedImg);
+      
+      alert(`Google Maps Link parsed successfully!\nLatitude: ${detectedLat}\nLongitude: ${detectedLng}\nReal Satellite temple photo generated!`);
+    } else {
+      alert("Could not extract coordinates from link. Please make sure the URL contains coordinates (e.g. '@22.7196,75.8480' or '?q=22.7196,75.8480') or input coordinates manually.");
+    }
+  };
+
+  const generateImageFromCoords = () => {
+    if (!lat || !lng) {
+      alert("Please input Latitude and Longitude coordinates first.");
+      return;
+    }
+    
+    // Generate actual, high-resolution satellite picture of the temple from space
+    const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${lng},${lat}&z=17&l=sat&size=600,450`;
+    setImageUrl(generatedImg);
+    alert("Real satellite image generated and loaded from Google Maps coordinates!");
   };
 
   // Submit Handler
@@ -551,10 +612,52 @@ function ContributeForm() {
               />
             </div>
 
+            {/* Google Maps Smart Importer */}
+            <div className="rounded-2xl border border-glass-border bg-cream-50/30 p-5 space-y-4">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold text-foreground flex items-center gap-1.5 uppercase tracking-wider">
+                  <span className="h-2 w-2 rounded-full bg-saffron-500 animate-pulse"></span>
+                  Google Maps Smart Importer
+                </span>
+                <span className="text-[10px] text-cream-800 font-medium">
+                  Paste the full Google Maps URL of the temple or its coordinates to auto-extract the location and pull a real satellite image!
+                </span>
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={googleMapsLink}
+                  onChange={(e) => setGoogleMapsLink(e.target.value)}
+                  placeholder="Paste Google Maps link (e.g. https://www.google.com/maps/place/...@22.7196,75.8480...)"
+                  className="flex-grow px-3 py-2.5 rounded-xl border border-glass-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-saffron-500/20 focus:border-saffron-500 text-foreground"
+                />
+                <button
+                  type="button"
+                  onClick={handleSmartImport}
+                  className="px-4 py-2 bg-saffron-500 text-white rounded-xl text-xs font-bold hover:bg-saffron-600 transition-all uppercase tracking-wider shrink-0 active:scale-95"
+                >
+                  Import Location
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 pt-1">
+                <span className="text-[10px] text-cream-800 font-semibold">Or generate using current coords:</span>
+                <button
+                  type="button"
+                  onClick={generateImageFromCoords}
+                  disabled={!lat || !lng}
+                  className="px-3.5 py-1.5 border border-glass-border bg-background text-foreground hover:bg-cream-100 dark:hover:bg-cream-200 rounded-xl text-[10px] font-bold transition-all disabled:opacity-40"
+                >
+                  Generate Satellite Image
+                </button>
+              </div>
+            </div>
+
             {/* Photo URL */}
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold uppercase tracking-wider text-cream-800">
-                Temple Image URL (Unsplash or web link)
+                Temple Image URL (Auto-filled by importer above, or custom link)
               </label>
               <input
                 type="url"
@@ -564,6 +667,15 @@ function ContributeForm() {
                 className="w-full px-4 py-2.5 rounded-xl border border-glass-border bg-cream-50/50 dark:bg-cream-100 text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500/20 text-foreground"
               />
             </div>
+
+            {imageUrl && (
+              <div className="space-y-1.5 animate-fade-in">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-cream-800">Image Preview</label>
+                <div className="h-40 rounded-xl overflow-hidden border border-glass-border bg-cream-100 relative">
+                  <img src={imageUrl} alt="Temple preview" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            )}
 
             {/* Facilities Checklist Flags */}
             <div className="space-y-4 pt-2">

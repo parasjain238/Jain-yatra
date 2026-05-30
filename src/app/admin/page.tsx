@@ -76,6 +76,7 @@ export default function AdminDashboard() {
   const [moolnayak, setMoolnayak] = useState("");
   const [trustName, setTrustName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [googleMapsLink, setGoogleMapsLink] = useState("");
   const [facilities, setFacilities] = useState<Facilities>({
     dharamshala_available: false,
     bhojanshala_available: false,
@@ -113,6 +114,60 @@ export default function AdminDashboard() {
     setFacilities(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const handleSmartImport = () => {
+    if (!googleMapsLink.trim()) {
+      alert("Please paste a Google Maps link first.");
+      return;
+    }
+
+    let detectedLat = "";
+    let detectedLng = "";
+
+    const atPattern = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+    const atMatch = googleMapsLink.match(atPattern);
+    if (atMatch) {
+      detectedLat = atMatch[1];
+      detectedLng = atMatch[2];
+    } else {
+      const qPattern = /[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/;
+      const qMatch = googleMapsLink.match(qPattern);
+      if (qMatch) {
+        detectedLat = qMatch[1];
+        detectedLng = qMatch[2];
+      } else {
+        const numberPattern = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+        const numMatch = googleMapsLink.match(numberPattern);
+        if (numMatch) {
+          detectedLat = numMatch[1];
+          detectedLng = numMatch[2];
+        }
+      }
+    }
+
+    if (detectedLat && detectedLng) {
+      setLat(parseFloat(detectedLat).toFixed(5));
+      setLng(parseFloat(detectedLng).toFixed(5));
+      
+      const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${detectedLng},${detectedLat}&z=17&l=sat&size=600,450`;
+      setImageUrl(generatedImg);
+      
+      alert(`Google Maps Link parsed successfully!\nLatitude: ${detectedLat}\nLongitude: ${detectedLng}\nReal Satellite temple photo generated!`);
+    } else {
+      alert("Could not extract coordinates from link. Please make sure the URL contains coordinates (e.g. '@22.7196,75.8480').");
+    }
+  };
+
+  const generateImageFromCoords = () => {
+    if (!lat || !lng) {
+      alert("Please input Latitude and Longitude coordinates first.");
+      return;
+    }
+    
+    const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${lng},${lat}&z=17&l=sat&size=600,450`;
+    setImageUrl(generatedImg);
+    alert("Real satellite image generated and loaded from Google Maps coordinates!");
+  };
+
   // Open CRUD Form
   const openAddForm = () => {
     setCrudMode("add");
@@ -130,6 +185,7 @@ export default function AdminDashboard() {
     setMoolnayak("");
     setTrustName("");
     setImageUrl("");
+    setGoogleMapsLink("");
     setFacilities({
       dharamshala_available: false,
       bhojanshala_available: false,
@@ -160,6 +216,7 @@ export default function AdminDashboard() {
     setMoolnayak(t.moolnayak);
     setTrustName(t.trust_name);
     setImageUrl(t.image_url);
+    setGoogleMapsLink("");
     setFacilities(t.facilities);
     setCrudModalOpen(true);
   };
@@ -737,6 +794,48 @@ export default function AdminDashboard() {
                 />
               </div>
 
+              {/* Google Maps Smart Importer */}
+              <div className="rounded-xl border border-glass-border bg-cream-50/20 p-4 space-y-3">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[11px] font-bold text-foreground flex items-center gap-1 uppercase tracking-wider">
+                    <span className="h-1.5 w-1.5 rounded-full bg-saffron-500 animate-pulse"></span>
+                    Google Maps Smart Importer
+                  </span>
+                  <span className="text-[9px] text-cream-800 font-semibold">
+                    Paste Google Maps URL or coordinates to auto-extract the location and pull a real satellite image!
+                  </span>
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={googleMapsLink}
+                    onChange={(e) => setGoogleMapsLink(e.target.value)}
+                    placeholder="Paste Google Maps link..."
+                    className="flex-grow px-2 py-1.5 border border-glass-border rounded-xl text-xs bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-saffron-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSmartImport}
+                    className="px-3 py-1.5 bg-saffron-500 text-white rounded-xl text-[10px] font-bold hover:bg-saffron-600 transition-all uppercase tracking-wider shrink-0"
+                  >
+                    Import
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between gap-4 pt-0.5">
+                  <span className="text-[9px] text-cream-800 font-semibold">Or generate from current coords:</span>
+                  <button
+                    type="button"
+                    onClick={generateImageFromCoords}
+                    disabled={!lat || !lng}
+                    className="px-2.5 py-1 border border-glass-border bg-background text-foreground hover:bg-cream-100 rounded-lg text-[9px] font-bold transition-all disabled:opacity-40"
+                  >
+                    Generate Satellite Image
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-cream-800">Image URL</label>
                 <input
@@ -746,6 +845,15 @@ export default function AdminDashboard() {
                   className="w-full px-3 py-2 border border-glass-border rounded-xl text-xs bg-cream-50/50 text-foreground"
                 />
               </div>
+
+              {imageUrl && (
+                <div className="space-y-1.5 animate-fade-in">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-cream-800">Image Preview</label>
+                  <div className="h-32 rounded-xl overflow-hidden border border-glass-border bg-cream-100 relative">
+                    <img src={imageUrl} alt="Temple preview" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+              )}
 
               {/* Facilities grid checkbox */}
               <div className="space-y-3 pt-2">
