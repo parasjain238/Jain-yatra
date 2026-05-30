@@ -68,8 +68,8 @@ function ContributeForm() {
   const [moolnayak, setMoolnayak] = useState("");
   const [trustName, setTrustName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-
   const [googleMapsLink, setGoogleMapsLink] = useState("");
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
 
   // Facility Flags
   const [facilities, setFacilities] = useState<Facilities>({
@@ -162,30 +162,74 @@ function ContributeForm() {
     }));
   };
 
-  const handleSmartImport = () => {
+  const handleSmartImport = async () => {
     if (!googleMapsLink.trim()) {
       alert("Please paste a Google Maps link first.");
       return;
     }
 
+    setIsFetchingDetails(true);
+    try {
+      console.log("Fetching temple details from Google Maps Link...");
+      const response = await fetch("/api/parse-gmaps", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: googleMapsLink }),
+      });
+
+      if (!response.ok) {
+        throw new Error("API call failed.");
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        if (data.latitude) setLat(data.latitude.toFixed(5));
+        if (data.longitude) setLng(data.longitude.toFixed(5));
+        if (data.temple_name) setTempleName(data.temple_name);
+        if (data.address) setAddress(data.address);
+        if (data.city) setCity(data.city);
+        if (data.state) setState(data.state);
+        if (data.phone) setPhone(data.phone);
+        if (data.timings) setTimings(data.timings);
+        
+        // Use Google Places photo or fallback satellite view if no places photo is parsed
+        if (data.image_url) {
+          setImageUrl(data.image_url);
+        } else if (data.latitude && data.longitude) {
+          const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${data.longitude},${data.latitude}&z=17&l=sat&size=600,450`;
+          setImageUrl(generatedImg);
+        }
+
+        alert(`Successfully auto-fetched temple details!\n\nName: ${data.temple_name || "Detected"}\nLocation: [${data.latitude || ""}, ${data.longitude || ""}]\nAddress: ${data.address || ""}`);
+      } else {
+        alert("Could not automatically resolve temple details. Prefilling location coordinates only.");
+        parseLocalCoordinates();
+      }
+    } catch (err) {
+      console.error("Failed to auto-fetch details from URL:", err);
+      alert("Network error. Falling back to local coordinates parsing...");
+      parseLocalCoordinates();
+    } finally {
+      setIsFetchingDetails(false);
+    }
+  };
+
+  const parseLocalCoordinates = () => {
     let detectedLat = "";
     let detectedLng = "";
 
-    // Pattern 1: /@22.7196,75.8480
     const atPattern = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
     const atMatch = googleMapsLink.match(atPattern);
     if (atMatch) {
       detectedLat = atMatch[1];
       detectedLng = atMatch[2];
     } else {
-      // Pattern 2: q=22.7196,75.8480
       const qPattern = /[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/;
       const qMatch = googleMapsLink.match(qPattern);
       if (qMatch) {
         detectedLat = qMatch[1];
         detectedLng = qMatch[2];
       } else {
-        // Pattern 3: direct comma separated numbers in url
         const numberPattern = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
         const numMatch = googleMapsLink.match(numberPattern);
         if (numMatch) {
@@ -198,14 +242,11 @@ function ContributeForm() {
     if (detectedLat && detectedLng) {
       setLat(parseFloat(detectedLat).toFixed(5));
       setLng(parseFloat(detectedLng).toFixed(5));
-      
-      // Auto generate the real satellite photo URL for this location
       const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${detectedLng},${detectedLat}&z=17&l=sat&size=600,450`;
       setImageUrl(generatedImg);
-      
-      alert(`Google Maps Link parsed successfully!\nLatitude: ${detectedLat}\nLongitude: ${detectedLng}\nReal Satellite temple photo generated!`);
+      alert(`Coordinates parsed locally!\nLatitude: ${detectedLat}\nLongitude: ${detectedLng}`);
     } else {
-      alert("Could not extract coordinates from link. Please make sure the URL contains coordinates (e.g. '@22.7196,75.8480' or '?q=22.7196,75.8480') or input coordinates manually.");
+      alert("Could not extract coordinates from link. Please input coordinates manually.");
     }
   };
 
@@ -635,9 +676,10 @@ function ContributeForm() {
                 <button
                   type="button"
                   onClick={handleSmartImport}
-                  className="px-4 py-2 bg-saffron-500 text-white rounded-xl text-xs font-bold hover:bg-saffron-600 transition-all uppercase tracking-wider shrink-0 active:scale-95"
+                  disabled={isFetchingDetails}
+                  className="px-4 py-2 bg-saffron-500 text-white rounded-xl text-xs font-bold hover:bg-saffron-600 transition-all uppercase tracking-wider shrink-0 active:scale-95 disabled:opacity-50"
                 >
-                  Import Location
+                  {isFetchingDetails ? "Fetching..." : "Auto-Fetch Details"}
                 </button>
               </div>
 

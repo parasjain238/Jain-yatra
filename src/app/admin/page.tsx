@@ -77,6 +77,7 @@ export default function AdminDashboard() {
   const [trustName, setTrustName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [googleMapsLink, setGoogleMapsLink] = useState("");
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
   const [facilities, setFacilities] = useState<Facilities>({
     dharamshala_available: false,
     bhojanshala_available: false,
@@ -114,12 +115,59 @@ export default function AdminDashboard() {
     setFacilities(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleSmartImport = () => {
+  const handleSmartImport = async () => {
     if (!googleMapsLink.trim()) {
       alert("Please paste a Google Maps link first.");
       return;
     }
 
+    setIsFetchingDetails(true);
+    try {
+      console.log("Fetching temple details from Google Maps Link...");
+      const response = await fetch("/api/parse-gmaps", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: googleMapsLink }),
+      });
+
+      if (!response.ok) {
+        throw new Error("API call failed.");
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        if (data.latitude) setLat(data.latitude.toFixed(5));
+        if (data.longitude) setLng(data.longitude.toFixed(5));
+        if (data.temple_name) setTempleName(data.temple_name);
+        if (data.address) setAddress(data.address);
+        if (data.city) setCity(data.city);
+        if (data.state) setState(data.state);
+        if (data.phone) setPhone(data.phone);
+        if (data.timings) setTimings(data.timings);
+        
+        // Use Google Places photo or fallback satellite view if no places photo is parsed
+        if (data.image_url) {
+          setImageUrl(data.image_url);
+        } else if (data.latitude && data.longitude) {
+          const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${data.longitude},${data.latitude}&z=17&l=sat&size=600,450`;
+          setImageUrl(generatedImg);
+        }
+
+        alert(`Successfully auto-fetched temple details!\n\nName: ${data.temple_name || "Detected"}\nLocation: [${data.latitude || ""}, ${data.longitude || ""}]\nAddress: ${data.address || ""}`);
+      } else {
+        alert("Could not automatically resolve temple details. Prefilling location coordinates only.");
+        parseLocalCoordinates();
+      }
+    } catch (err) {
+      console.error("Failed to auto-fetch details from URL:", err);
+      alert("Network error. Falling back to local coordinates parsing...");
+      parseLocalCoordinates();
+    } finally {
+      setIsFetchingDetails(false);
+    }
+  };
+
+  const parseLocalCoordinates = () => {
     let detectedLat = "";
     let detectedLng = "";
 
@@ -147,13 +195,11 @@ export default function AdminDashboard() {
     if (detectedLat && detectedLng) {
       setLat(parseFloat(detectedLat).toFixed(5));
       setLng(parseFloat(detectedLng).toFixed(5));
-      
       const generatedImg = `https://static-maps.yandex.ru/1.x/?ll=${detectedLng},${detectedLat}&z=17&l=sat&size=600,450`;
       setImageUrl(generatedImg);
-      
-      alert(`Google Maps Link parsed successfully!\nLatitude: ${detectedLat}\nLongitude: ${detectedLng}\nReal Satellite temple photo generated!`);
+      alert(`Coordinates parsed locally!\nLatitude: ${detectedLat}\nLongitude: ${detectedLng}`);
     } else {
-      alert("Could not extract coordinates from link. Please make sure the URL contains coordinates (e.g. '@22.7196,75.8480').");
+      alert("Could not extract coordinates from link. Please input coordinates manually.");
     }
   };
 
@@ -817,9 +863,10 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={handleSmartImport}
-                    className="px-3 py-1.5 bg-saffron-500 text-white rounded-xl text-[10px] font-bold hover:bg-saffron-600 transition-all uppercase tracking-wider shrink-0"
+                    disabled={isFetchingDetails}
+                    className="px-3 py-1.5 bg-saffron-500 text-white rounded-xl text-[10px] font-bold hover:bg-saffron-600 transition-all uppercase tracking-wider shrink-0 disabled:opacity-50"
                   >
-                    Import
+                    {isFetchingDetails ? "Fetching..." : "Auto-Fetch"}
                   </button>
                 </div>
 
