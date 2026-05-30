@@ -68,6 +68,8 @@ export default function Home() {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationSource, setLocationSource] = useState<"gps" | "ip" | "vercel" | null>(null);
+  const [locationCity, setLocationCity] = useState<string | null>(null);
   
   // Map and Selection State
   const [mapCenter, setMapCenter] = useState<[number, number]>([22.7196, 75.8480]); // Default Indore
@@ -86,17 +88,106 @@ export default function Home() {
     loadData();
   }, []);
 
-  // Request browser geolocation
-  const detectLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser.");
-      return;
+  // Silent fallback to IP Geolocation when browser GPS fails
+  const fetchIPLocation = async (): Promise<boolean> => {
+    console.log("Attempting IP-based geolocation fallback...");
+    
+    // Attempt 1: ipapi.co (Primary, HTTPS secure)
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.latitude && data.longitude) {
+          const coords: [number, number] = [Number(data.latitude), Number(data.longitude)];
+          setUserLocation(coords);
+          setMapCenter(coords);
+          setMapZoom(11);
+          setLocationSource("ip");
+          setLocationCity(data.city || data.region || "Nearby");
+          setLocationError(null);
+          console.log("IP Geolocation succeeded via ipapi.co:", data.city, coords);
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn("Primary IP Geolocation (ipapi.co) failed, trying secondary:", e);
     }
 
+    // Attempt 2: ipinfo.io (Secondary, HTTPS secure, loc split)
+    try {
+      const res = await fetch("https://ipinfo.io/json");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.loc) {
+          const [latStr, lonStr] = data.loc.split(",");
+          const lat = parseFloat(latStr);
+          const lon = parseFloat(lonStr);
+          if (!isNaN(lat) && !isNaN(lon)) {
+            const coords: [number, number] = [lat, lon];
+            setUserLocation(coords);
+            setMapCenter(coords);
+            setMapZoom(11);
+            setLocationSource("ip");
+            setLocationCity(data.city || data.region || "Nearby");
+            setLocationError(null);
+            console.log("IP Geolocation succeeded via ipinfo.io:", data.city, coords);
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Secondary IP Geolocation (ipinfo.io) also failed:", e);
+    }
+
+    return false;
+  };
+
+  // Request browser geolocation
+  const detectLocation = async (isManual: boolean = false) => {
     setLocationLoading(true);
     setLocationError(null);
 
-    // Try high accuracy first, with a short timeout of 3.5 seconds
+    // 1. If automatic detection (page load), try our fast Vercel edge header endpoint first
+    if (!isManual) {
+      try {
+        console.log("Checking Vercel Edge geolocation route...");
+        const res = await fetch("/api/detect-location");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.latitude && data.longitude) {
+            const coords: [number, number] = [Number(data.latitude), Number(data.longitude)];
+            setUserLocation(coords);
+            setMapCenter(coords);
+            setMapZoom(11);
+            setLocationSource("vercel");
+            setLocationCity(data.city || data.region || "Nearby");
+            setLocationLoading(false);
+            console.log("Resolved geolocation via Vercel Edge Headers:", coords);
+            return; // Successfully resolved!
+          }
+        }
+      } catch (e) {
+        console.warn("Vercel Edge location fetch error, falling back to browser GPS:", e);
+      }
+    }
+
+    // 2. Browser standard/high-precision Geolocation
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.");
+      await fetchIPLocation();
+      setLocationLoading(false);
+      return;
+    }
+
+    // Setup options: force fresh high-accuracy chip lookup on manual clicks, standard cache on auto-loads
+    const options = {
+      enableHighAccuracy: isManual, 
+      timeout: 10000, // 10 seconds is plenty of time for user consent and locks
+      maximumAge: isManual ? 0 : 600000 // no cache for manual clicks to refresh "wrong location"
+    };
+
+    console.log(`Starting browser geolocation (HighAccuracy=${isManual})...`);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -104,40 +195,35 @@ export default function Home() {
         setUserLocation(coords);
         setMapCenter(coords);
         setMapZoom(11);
+        setLocationSource("gps");
+        setLocationCity(null);
+        setLocationLoading(false);
+        setLocationError(null);
+        console.log("Browser Geolocation succeeded:", coords);
+      },
+      async (error) => {
+        console.warn("Browser Geolocation failed. Code:", error.code, "Message:", error.message);
+        
+        // Silently attempt IP geolocation fallback
+        const ipSuccess = await fetchIPLocation();
+        
+        if (!ipSuccess) {
+          let errorMsg = "Unable to retrieve your location automatically. Please enable browser location permissions.";
+          if (error.code === error.PERMISSION_DENIED) {
+            errorMsg = "Location permission denied. Please allow location access or type search terms.";
+          }
+          setLocationError(errorMsg);
+        }
+        
         setLocationLoading(false);
       },
-      (error) => {
-        console.warn("High accuracy geolocation failed or timed out. Falling back to low accuracy for laptop...", error);
-        
-        // Immediately fallback to low accuracy Wi-Fi/IP based retrieval (very robust on laptops/desktops)
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            const { latitude, longitude } = pos.coords;
-            const coords: [number, number] = [latitude, longitude];
-            setUserLocation(coords);
-            setMapCenter(coords);
-            setMapZoom(11);
-            setLocationLoading(false);
-          },
-          (err) => {
-            console.error("Graceful fallback location also failed:", err);
-            let errorMsg = "Unable to retrieve your coordinates automatically. Laptops without GPS require browser location permissions enabled.";
-            if (err.code === err.PERMISSION_DENIED) {
-              errorMsg = "Location access denied. Please enable location permissions in your browser.";
-            }
-            setLocationError(errorMsg);
-            setLocationLoading(false);
-          },
-          { enableHighAccuracy: false, timeout: 8000 }
-        );
-      },
-      { enableHighAccuracy: true, timeout: 3500 }
+      options
     );
   };
 
   // Auto detect location on initial visit (non-blocking)
   useEffect(() => {
-    detectLocation();
+    detectLocation(false);
   }, []);
 
   // Extract unique states and cities for filter lists
@@ -349,19 +435,26 @@ export default function Home() {
           <div className="flex flex-col items-center gap-3 pt-4">
             <div className="flex flex-wrap justify-center gap-3">
               <button
-                onClick={detectLocation}
+                onClick={() => detectLocation(true)}
                 disabled={locationLoading}
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-saffron-500 text-white font-bold text-sm hover:bg-saffron-600 shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50 tracking-wider uppercase"
               >
                 <Navigation className={`h-4.5 w-4.5 ${locationLoading ? "animate-spin" : ""}`} />
-                {locationLoading ? "Detecting Live Coordinates..." : "Use My Live Location"}
+                {locationLoading ? "Detecting Precise GPS Location..." : "Use My Live Location"}
               </button>
             </div>
 
             {userLocation ? (
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-500 text-xs font-semibold">
                 <MapPin className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                <span>GPS Connected: [{userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}] • Temples sorted by nearest</span>
+                <span>
+                  {locationSource === "gps" 
+                    ? `GPS Connected (Precise): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]` 
+                    : locationSource === "vercel"
+                    ? `Location via Vercel Edge (${locationCity || "Nearby"}): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]`
+                    : `Location via IP (${locationCity || "Nearby"}): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]`}
+                  {" • Temples sorted by nearest"}
+                </span>
               </div>
             ) : locationError ? (
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-500 text-xs font-semibold max-w-md">
@@ -370,7 +463,7 @@ export default function Home() {
               </div>
             ) : (
               <div className="text-xs text-cream-800 font-medium">
-                Waiting for GPS coordinates... (Indore coordinates loaded as center fallback)
+                Waiting for coordinates... (Indore loaded as default center)
               </div>
             )}
           </div>
