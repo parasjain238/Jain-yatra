@@ -1724,7 +1724,7 @@ export const MOCK_TEMPLES: Temple[] = [
     }
   },
   {
-    id: "t-hastinapur",
+    id: "t-hastinapur-2",
     temple_name: "Hastinapur Shantinath Birthplace",
     temple_type: "Both",
     state: "Uttar Pradesh",
