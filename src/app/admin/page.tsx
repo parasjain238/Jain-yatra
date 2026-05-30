@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
 import Navbar from "../../components/Navbar";
 import { db } from "../../services/db";
 import { 
@@ -52,10 +53,15 @@ interface CommunityUpdate {
 }
 
 export default function AdminDashboard() {
-  const [role, setRole] = useState<"Guest" | "Contributor" | "Admin">("Guest");
+  const { user, isLoaded: isUserLoaded } = useUser();
   const [temples, setTemples] = useState<Temple[]>([]);
   const [suggestions, setSuggestions] = useState<CommunityUpdate[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Check if current user is an Admin
+  const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
+  const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
+  const isAdmin = isUserLoaded && userEmail && adminEmails.includes(userEmail);
 
   // CRUD Modal States
   const [crudModalOpen, setCrudModalOpen] = useState(false);
@@ -95,10 +101,7 @@ export default function AdminDashboard() {
 
   // Fetch admin stats and collections
   async function reloadAdminData() {
-    const activeRole = db.getUserRole();
-    setRole(activeRole);
-
-    if (activeRole === "Admin") {
+    if (isAdmin) {
       const allTemples = await db.getTemples();
       const allSugs = await db.getSuggestions();
       setTemples([...allTemples]);
@@ -108,8 +111,10 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
-    reloadAdminData();
-  }, []);
+    if (isUserLoaded) {
+      reloadAdminData();
+    }
+  }, [isUserLoaded, isAdmin]);
 
   const handleFacilityToggle = (key: keyof Facilities) => {
     setFacilities(prev => ({ ...prev, [key]: !prev[key] }));
@@ -340,7 +345,7 @@ export default function AdminDashboard() {
   }, [activeSug, temples]);
 
   // Loading screen
-  if (loading) {
+  if (!isUserLoaded || loading) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
@@ -355,7 +360,7 @@ export default function AdminDashboard() {
   }
 
   // 1. Authorization Lockout Wrapper
-  if (role !== "Admin") {
+  if (!isAdmin) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
@@ -375,7 +380,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="rounded-xl border border-glass-border p-4 bg-saffron-50/30 text-xs text-cream-800 font-semibold leading-relaxed">
-              <strong>Quick Developer Override:</strong> Use the <strong>Role Switcher Dropdown</strong> in the top Navigation Bar to select <strong>"Admin"</strong>. This will instantly mock Clerk authentication and unlock this panel!
+              <strong>Account Unauthorized:</strong> Your email address ({userEmail || "Unknown"}) is not authorized to access the Admin Panel. If you believe this is an error, please contact the platform administrator.
             </div>
 
             <div>
