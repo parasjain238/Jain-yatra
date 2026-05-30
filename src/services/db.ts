@@ -7,66 +7,83 @@ const globalForDb = globalThis as unknown as {
   userRole: "Guest" | "Contributor" | "Admin";
 };
 
-// Always reload pre-seeded temples in development so changes in mockData.ts reflect instantly!
-if (process.env.NODE_ENV === "development" || !globalForDb.temples) {
-  globalForDb.temples = [...MOCK_TEMPLES];
+const isBrowser = typeof window !== 'undefined';
+
+const loadFromStorage = <T>(key: string, fallback: T): T => {
+  if (isBrowser) {
+    const saved = localStorage.getItem(key);
+    if (saved) return JSON.parse(saved);
+  }
+  return fallback;
+};
+
+const saveToStorage = (key: string, data: any) => {
+  if (isBrowser) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+};
+
+const defaultSuggestions: CommunityUpdate[] = [
+  {
+    id: "sug-1",
+    temple_id: "t-indore-gommatagiri",
+    update_type: "correction",
+    details: {
+      phone: "+91 94250 58742",
+      timings: "5:30 AM - 9:30 PM",
+      trust_name: "Gommatagiri Digambar Jain Welfare Trust"
+    },
+    contributor_email: "paras.jain@example.com",
+    contributor_name: "Paras Jain",
+    status: "pending",
+    created_at: new Date().toISOString()
+  },
+  {
+    id: "sug-2",
+    update_type: "new_temple",
+    details: {
+      temple_name: "Gwalior Gopachal Parvat",
+      temple_type: "Digambar",
+      state: "Madhya Pradesh",
+      city: "Gwalior",
+      address: "Gopachal Parvat, Near Gwalior Fort, Gwalior, MP 474001",
+      latitude: 26.2166,
+      longitude: 78.1692,
+      phone: "+91 751 240 9851",
+      moolnayak: "Lord Adinath (47-foot monolithic statue)",
+      trust_name: "Gopachal Parvat Digambar Jain Kshetr Samiti",
+      timings: "6:00 AM - 8:30 PM",
+      history: "Gopachal Parvat contains spectacular rock-cut monuments containing gigantic monolithic statues of Jain Tirthankaras carved between 1341 and 1479 AD under Tomar rulers. The largest is a 47-foot seated statue of Lord Adinath.",
+      image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+      facilities: {
+        dharamshala_available: true,
+        bhojanshala_available: false,
+        parking_available: true,
+        ac_rooms_available: false,
+        family_rooms_available: false,
+        lift_available: false,
+        wheelchair_accessible: false,
+        drinking_water_available: true,
+        online_contact_available: false
+      }
+    },
+    contributor_email: "amit.shah@example.com",
+    contributor_name: "Amit Shah",
+    status: "pending",
+    created_at: new Date().toISOString()
+  }
+];
+
+if (!globalForDb.temples) {
+  globalForDb.temples = loadFromStorage("jain_yatra_temples", [...MOCK_TEMPLES]);
 }
 
 if (!globalForDb.userRole) {
-  globalForDb.userRole = "Admin";
+  globalForDb.userRole = loadFromStorage("jain_yatra_role", "Admin");
 }
 
 if (!globalForDb.suggestions) {
-  globalForDb.suggestions = [
-    {
-      id: "sug-1",
-      temple_id: "t-indore-gommatagiri",
-      update_type: "correction",
-      details: {
-        phone: "+91 94250 58742",
-        timings: "5:30 AM - 9:30 PM",
-        trust_name: "Gommatagiri Digambar Jain Welfare Trust"
-      },
-      contributor_email: "paras.jain@example.com",
-      contributor_name: "Paras Jain",
-      status: "pending",
-      created_at: new Date().toISOString()
-    },
-    {
-      id: "sug-2",
-      update_type: "new_temple",
-      details: {
-        temple_name: "Gwalior Gopachal Parvat",
-        temple_type: "Digambar",
-        state: "Madhya Pradesh",
-        city: "Gwalior",
-        address: "Gopachal Parvat, Near Gwalior Fort, Gwalior, MP 474001",
-        latitude: 26.2166,
-        longitude: 78.1692,
-        phone: "+91 751 240 9851",
-        moolnayak: "Lord Adinath (47-foot monolithic statue)",
-        trust_name: "Gopachal Parvat Digambar Jain Kshetr Samiti",
-        timings: "6:00 AM - 8:30 PM",
-        history: "Gopachal Parvat contains spectacular rock-cut monuments containing gigantic monolithic statues of Jain Tirthankaras carved between 1341 and 1479 AD under Tomar rulers. The largest is a 47-foot seated statue of Lord Adinath.",
-        image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
-        facilities: {
-          dharamshala_available: true,
-          bhojanshala_available: false,
-          parking_available: true,
-          ac_rooms_available: false,
-          family_rooms_available: false,
-          lift_available: false,
-          wheelchair_accessible: false,
-          drinking_water_available: true,
-          online_contact_available: false
-        }
-      },
-      contributor_email: "amit.shah@example.com",
-      contributor_name: "Amit Shah",
-      status: "pending",
-      created_at: new Date().toISOString()
-    }
-  ];
+  globalForDb.suggestions = loadFromStorage("jain_yatra_suggestions", defaultSuggestions);
 }
 
 export const db = {
@@ -74,6 +91,7 @@ export const db = {
   getUserRole: () => globalForDb.userRole,
   setUserRole: (role: "Guest" | "Contributor" | "Admin") => {
     globalForDb.userRole = role;
+    saveToStorage("jain_yatra_role", role);
     return role;
   },
 
@@ -92,6 +110,7 @@ export const db = {
       id: `t-${Date.now()}`
     };
     globalForDb.temples.unshift(newTemple);
+    saveToStorage("jain_yatra_temples", globalForDb.temples);
     return newTemple;
   },
   
@@ -111,6 +130,7 @@ export const db = {
       ...globalForDb.temples[index],
       ...updates
     };
+    saveToStorage("jain_yatra_temples", globalForDb.temples);
     return globalForDb.temples[index];
   },
   
@@ -118,6 +138,7 @@ export const db = {
     const index = globalForDb.temples.findIndex(t => t.id === id);
     if (index === -1) return false;
     globalForDb.temples.splice(index, 1);
+    saveToStorage("jain_yatra_temples", globalForDb.temples);
     return true;
   },
 
@@ -134,6 +155,7 @@ export const db = {
       created_at: new Date().toISOString()
     };
     globalForDb.suggestions.unshift(newSug);
+    saveToStorage("jain_yatra_suggestions", globalForDb.suggestions);
     return newSug;
   },
   
@@ -146,8 +168,9 @@ export const db = {
     
     if (sug.update_type === "new_temple") {
       const { facilities, ...basicInfo } = sug.details;
-      await db.addTemple({
+      const newTemple: Temple = {
         ...basicInfo,
+        id: `t-${Date.now()}`,
         facilities: facilities || {
           dharamshala_available: false,
           bhojanshala_available: false,
@@ -159,11 +182,15 @@ export const db = {
           drinking_water_available: true,
           online_contact_available: false
         }
-      });
+      } as Temple;
+      globalForDb.temples.unshift(newTemple);
+      saveToStorage("jain_yatra_temples", globalForDb.temples);
     } else if (sug.update_type === "correction" && sug.temple_id) {
       await db.updateTemple(sug.temple_id, sug.details);
+      // updateTemple already saves to storage
     }
     
+    saveToStorage("jain_yatra_suggestions", globalForDb.suggestions);
     return sug;
   },
   
@@ -173,6 +200,7 @@ export const db = {
     
     globalForDb.suggestions[index].status = "rejected";
     globalForDb.suggestions[index].admin_feedback = feedback || "Incorrect or unverified information.";
+    saveToStorage("jain_yatra_suggestions", globalForDb.suggestions);
     return globalForDb.suggestions[index];
   }
 };
