@@ -75,7 +75,16 @@ const defaultSuggestions: CommunityUpdate[] = [
 ];
 
 if (!globalForDb.temples) {
-  globalForDb.temples = loadFromStorage("jain_yatra_temples", [...MOCK_TEMPLES]);
+  const stored = loadFromStorage<Temple[] | null>("jain_yatra_temples", null);
+  if (stored) {
+    // Merge: keep stored (to preserve edits/deletions), but add new mock temples
+    const storedIds = new Set(stored.map((t: Temple) => t.id));
+    const missingMocks = MOCK_TEMPLES.filter(t => !storedIds.has(t.id));
+    globalForDb.temples = [...missingMocks, ...stored];
+    saveToStorage("jain_yatra_temples", globalForDb.temples);
+  } else {
+    globalForDb.temples = [...MOCK_TEMPLES];
+  }
 }
 
 if (!globalForDb.userRole) {
