@@ -356,7 +356,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-auto lg:h-[750px]">
           
           {/* Left panel: Filters (1/3 cols on desktop) and List */}
-          <div className="lg:col-span-4 flex flex-col space-y-6 h-full overflow-y-auto pr-1">
+          <div className="lg:col-span-4 flex flex-col space-y-6">
             <Filters
               onFilterChange={setActiveFilters}
               availableStates={states}
@@ -374,8 +374,8 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Discoveries list scrollable box */}
-            <div className="flex flex-col gap-4 overflow-y-auto pr-1 flex-grow pb-12 lg:pb-0 min-h-[400px]">
+            {/* Discoveries list box */}
+            <div className="flex flex-col gap-4 pb-12">
               {filteredAndSortedTemples.map((temple) => (
                 <TempleCard
                   key={temple.id}
