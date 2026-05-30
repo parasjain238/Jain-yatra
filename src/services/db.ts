@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === "development" || !globalForDb.temples) {
 }
 
 if (!globalForDb.userRole) {
-  globalForDb.userRole = "Guest";
+  globalForDb.userRole = "Admin";
 }
 
 if (!globalForDb.suggestions) {
