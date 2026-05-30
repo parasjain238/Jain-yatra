@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Navigation, PlusCircle, ShieldAlert, Sun, Moon, Sparkles, Menu, X, Landmark } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
 import { db } from "../services/db";
 
 export default function Navbar() {
@@ -107,6 +108,8 @@ export default function Navbar() {
 
           {/* Right Action panel */}
           <div className="hidden md:flex items-center gap-4">
+            <UserButton />
+            
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -155,6 +158,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-3">
+            <UserButton />
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
