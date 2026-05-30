@@ -7,7 +7,8 @@ const globalForDb = globalThis as unknown as {
   userRole: "Guest" | "Contributor" | "Admin";
 };
 
-if (!globalForDb.temples) {
+// Always reload pre-seeded temples in development so changes in mockData.ts reflect instantly!
+if (process.env.NODE_ENV === "development" || !globalForDb.temples) {
   globalForDb.temples = [...MOCK_TEMPLES];
 }
 

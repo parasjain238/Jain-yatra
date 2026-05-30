@@ -51,6 +51,8 @@ export default function TempleCard({
   onSelect,
 }: TempleCardProps) {
   const travelTimeMinutes = distanceKm ? estimateTravelTime(distanceKm) : null;
+  const searchName = `${temple.temple_name}, ${temple.city}, ${temple.state}`;
+  const imageSource = `/api/places-photo?name=${encodeURIComponent(searchName)}&fallback=${encodeURIComponent(temple.image_url)}`;
 
   // Compile list of facility icons to display on card (only showing active ones)
   const activeFacilities = [
@@ -80,7 +82,7 @@ export default function TempleCard({
       {/* Temple Banner Image */}
       <div className="relative h-48 w-full overflow-hidden bg-cream-100">
         <img 
-          src={temple.image_url} 
+          src={imageSource} 
           alt={temple.temple_name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           onError={(e) => {

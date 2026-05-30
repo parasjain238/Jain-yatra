@@ -109,6 +109,8 @@ export default function TempleDetails() {
   ];
 
   const googleMapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${temple.latitude},${temple.longitude}`;
+  const searchName = `${temple.temple_name}, ${temple.city}, ${temple.state}`;
+  const imageSource = `/api/places-photo?name=${encodeURIComponent(searchName)}&fallback=${encodeURIComponent(temple.image_url)}`;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -117,7 +119,7 @@ export default function TempleDetails() {
       {/* Parallax Hero Banner */}
       <section className="relative h-[320px] md:h-[450px] w-full bg-cream-950 overflow-hidden">
         <img 
-          src={temple.image_url} 
+          src={imageSource} 
           alt={temple.temple_name}
           className="h-full w-full object-cover opacity-60"
           onError={(e) => {
