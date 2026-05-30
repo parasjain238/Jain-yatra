@@ -59,7 +59,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 12:00 PM, 4:00 PM - 8:30 PM",
     moolnayak: "Lord Chandraprabhu (8th Tirthankara)",
     trust_name: "Sir Seth Hukumchand Digambar Jain Trust",
-    image_url: "https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Kanch_Mandir%2C_Indore.jpg",
     facilities: {
       dharamshala_available: false,
       bhojanshala_available: false,
@@ -86,7 +86,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 9:00 PM",
     moolnayak: "Lord Bahubali (First Tirthankara's Son)",
     trust_name: "Gommatagiri Digambar Jain Prabandhak Samiti",
-    image_url: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/22/Gommateshwara_Statue_Shravanabelagola.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -113,7 +113,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 9:30 PM",
     moolnayak: "Lord Mahavira (24th Tirthankara)",
     trust_name: "Mahavirgiri Highway Jain Welfare Trust",
-    image_url: "https://images.unsplash.com/photo-1609137144814-1e2474775d71?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Ranakpur_Jain_Temple_Interior.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -140,7 +140,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 10:00 PM",
     moolnayak: "Lord Parshwanath (23rd Tirthankara)",
     trust_name: "Shree Avantika Parshwanath Shwetambar Jain Trust",
-    image_url: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Parshvanatha_temple_Khajuraho.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -167,7 +167,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 9:00 PM",
     moolnayak: "Lord Mahavira (Seated Monolith)",
     trust_name: "Shree Pushpagiri Digambar Jain Prabandh Samiti",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Pushpgiri_Jain_Tirth%2C_Sonkatch%2C_Dewas.png",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -194,7 +194,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 9:30 PM",
     moolnayak: "Lord Maksi Parshwanath (23rd Tirthankara)",
     trust_name: "Shree Maksi Parshwanath Digambar-Shwetambar Joint Trust Samiti",
-    image_url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Ranakpur_Jain_Temple_Interior.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -221,7 +221,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 8:30 PM",
     moolnayak: "Lord Adinath (24-ton Octo-Alloy Monolith)",
     trust_name: "Shree Sarvodaya Digambar Jain Tirth Trust Amarkantak",
-    image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Amarkantak_Jain_Temple.png",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -248,7 +248,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 8:30 PM",
     moolnayak: "Lord Adinath (1st Tirthankara)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Pisanhari Ki Madiya Trust",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Pisanhari_ki_Marhia_Jain_Temple%2C_Jabalpur%2C_Madhya_Pradesh%2C_India.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -275,7 +275,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 8:00 PM",
     moolnayak: "Lord Shantinath (18-foot monolithic statue)",
     trust_name: "Shree Digambar Jain Atishaya Kshetra Bajrangarh Mandir Committee",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/d/df/Gopachal_Parvat_-_Rockcut_Jain_Sculptures.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -302,7 +302,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 8:30 PM",
     moolnayak: "Lord Adinath (1st Tirthankara)",
     trust_name: "Shree Digambar Jain Atishaya Kshetra Paporaji Mandir Trust",
-    image_url: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -329,7 +329,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 8:30 PM",
     moolnayak: "Lord Shantinath (16th Tirthankara)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Pavagiri Una Samiti",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -356,7 +356,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 8:00 PM",
     moolnayak: "Lord Suparshwanath (7th Tirthankara)",
     trust_name: "Shree Mandavgarh Shwetambar Jain Tirth Trust Mandu",
-    image_url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Ranakpur_Jain_Temple_Interior.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -383,7 +383,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "8:00 AM - 6:00 PM",
     moolnayak: "Lord Adinath (1st Tirthankara)",
     trust_name: "Archaeological Survey of India & Sagar Jain Samaj",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/d/df/Gopachal_Parvat_-_Rockcut_Jain_Sculptures.jpg",
     facilities: {
       dharamshala_available: false,
       bhojanshala_available: false,
@@ -410,7 +410,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 9:00 PM",
     moolnayak: "Lord Chintamani Parshwanath (23rd Tirthankara)",
     trust_name: "Barwaha Digambar Jain Samaj Prabandhak Committee",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Ranakpur_Jain_Temple_Interior.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -437,7 +437,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 8:30 PM",
     moolnayak: "Lord Chandraprabhu (Temple No. 57, 11-foot monolithic statue)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Sonagiri Prabandhkarini Samiti",
-    image_url: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -464,7 +464,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 9:00 PM",
     moolnayak: "Lord Adinath / Bade Baba (1st Tirthankara)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Kundalpur Trust Committee",
-    image_url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Temples_kundalpur.JPG",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -491,7 +491,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 8:30 PM",
     moolnayak: "Lord Adinath (84-foot Monolith)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Bawangaja Trust Samiti",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Bawangajastatue.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -518,7 +518,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 8:30 PM",
     moolnayak: "Lord Adinath (47-foot monolithic statue)",
     trust_name: "Gopachal Parvat Digambar Jain Kshetr Samiti",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/d/df/Gopachal_Parvat_-_Rockcut_Jain_Sculptures.jpg",
     facilities: {
       dharamshala_available: false,
       bhojanshala_available: false,
@@ -545,7 +545,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 6:00 PM",
     moolnayak: "Lord Adinath (58-foot standing monolith)",
     trust_name: "Gwalior Fort Digambar Jain Mandir Committee",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Jain_statues_in_Siddhachal_Caves.jpg",
     facilities: {
       dharamshala_available: false,
       bhojanshala_available: false,
@@ -572,7 +572,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:30 AM - 9:00 PM",
     moolnayak: "Lord Mahavira (24th Tirthankara)",
     trust_name: "Shree Manua Bhan Tekri Prabandhak Samiti",
-    image_url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -599,7 +599,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 8:30 PM",
     moolnayak: "Lord Adinath (12-foot standing monolith)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Thubonji Prabandhak Samiti",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -626,7 +626,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 6:00 PM",
     moolnayak: "Lord Parshwanath (23rd Tirthankara)",
     trust_name: "Archaeological Survey of India & Local Jain Samaj Joint Trust",
-    image_url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Parshvanatha_temple_Khajuraho.jpg",
     facilities: {
       dharamshala_available: false,
       bhojanshala_available: false,
@@ -653,7 +653,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 8:30 PM",
     moolnayak: "Lord Shantinath (18-foot monolithic statue)",
     trust_name: "Shree Digambar Jain Atishaya Kshetra Aharji Samiti",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/29/Aharji.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -680,7 +680,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 8:30 PM",
     moolnayak: "Lord Parshwanath (23rd Tirthankara)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Nainagiri Samiti",
-    image_url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -707,7 +707,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 9:00 PM",
     moolnayak: "Lord Mahavira (Seated Monolith)",
     trust_name: "Shree Mangalgiri Digambar Jain Prabandhak Samiti",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -734,7 +734,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 8:00 PM",
     moolnayak: "Lord Adinath (1st Tirthankara)",
     trust_name: "Chanderi Digambar Jain Samaj Prabandhak Committee",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/d/df/Gopachal_Parvat_-_Rockcut_Jain_Sculptures.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -761,7 +761,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 8:30 PM",
     moolnayak: "Lord Ajitnath (2nd Tirthankara)",
     trust_name: "Shree Digambar Jain Atishaya Kshetra Bandhaji Mandir",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -788,7 +788,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 6:00 PM",
     moolnayak: "Lord Shantinath (20-foot monolithic statue)",
     trust_name: "Archaeological Survey of India & Sagar Jain Samaj",
-    image_url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/d/df/Gopachal_Parvat_-_Rockcut_Jain_Sculptures.jpg",
     facilities: {
       dharamshala_available: false,
       bhojanshala_available: false,
@@ -815,7 +815,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 9:00 PM",
     moolnayak: "Lord Adinath (1st Tirthankara)",
     trust_name: "Shree Digambar Jain Siddha Kshetra Nemawar Samiti",
-    image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -842,7 +842,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 9:00 PM",
     moolnayak: "Lord Chandraprabhu (8th Tirthankara)",
     trust_name: "Makronia Digambar Jain Mandir Welfare Trust",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -869,7 +869,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 8:30 PM",
     moolnayak: "Jain Holy Scriptures (Granth Ji)",
     trust_name: "Shree Taran Taran Mandala Digambar Jain Trust Sagar",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -900,7 +900,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 7:00 PM (No overnight stay allowed on the hill)",
     moolnayak: "Lord Adinath / Rishabhdev (1st Tirthankara)",
     trust_name: "Seth Anandji Kalyanji Devasthan Trust",
-    image_url: "https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Palitana_Jain_temples.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -927,7 +927,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "3:30 AM - 6:00 PM (Ascent begins in the dark, overnight stays strictly banned)",
     moolnayak: "Lord Parshwanath (23rd Tirthankara)",
     trust_name: "Shree Digambar Jain Madhuban Kothi & Seth Anandji Joint Trust",
-    image_url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Parshvanatha_temple_Khajuraho.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -954,7 +954,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "12:00 PM - 5:00 PM (Devotees worship early morning)",
     moolnayak: "Lord Adinath / Rishabhdev (1st Tirthankara)",
     trust_name: "Sheth Anandji Kalyanji Devasthan Trust (Ranakpur Division)",
-    image_url: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Ranakpur_Jain_Temple_Interior.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -981,7 +981,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "12:00 PM - 6:00 PM (Devotees/Pooja allowed 6:00 AM - 12:00 PM)",
     moolnayak: "Lord Adinath (Vimal Vasahi Temple)",
     trust_name: "Shree Kalyanji Parmanandji Mount Abu Devsthan Samiti",
-    image_url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/3/30/Dilwara_Jain_Temple_ceiling.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -1008,7 +1008,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "6:00 AM - 6:30 PM",
     moolnayak: "Lord Bahubali (Monolithic Statue)",
     trust_name: "Shree Bahubali Digambar Jain Atishaya Kshetra Mahasamiti",
-    image_url: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/22/Gommateshwara_Statue_Shravanabelagola.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -1035,7 +1035,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:00 AM - 9:00 PM",
     moolnayak: "Lord Mahavira (Charan Paduka)",
     trust_name: "Shree Pavapuri Jain Shwetambar Bihar Prabandhak Samiti",
-    image_url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/23/Jal_Mandir_Pawapuri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -1062,7 +1062,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 9:00 PM",
     moolnayak: "Lord Shantinath (16th Tirthankara)",
     trust_name: "Digambar Jain Trilok Sansthan Jambudweep Trust",
-    image_url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Sonagiri.jpg",
     facilities: {
       dharamshala_available: true,
       bhojanshala_available: true,
@@ -1089,7 +1089,7 @@ export const MOCK_TEMPLES: Temple[] = [
     timings: "5:30 AM - 11:30 AM, 6:00 PM - 9:30 PM",
     moolnayak: "Lord Parshwanath (23rd Tirthankara)",
     trust_name: "Prabandhak Commitee Sri Digambar Jain Lal Mandir Trust",
-    image_url: "https://images.unsplash.com/photo-1581091870622-045c6b88593b?auto=format&fit=crop&w=600&q=80",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Shri_Digambar_Jain_Lal_Mandir%2C_Delhi.jpg",
     facilities: {
       dharamshala_available: false,
       bhojanshala_available: false,
