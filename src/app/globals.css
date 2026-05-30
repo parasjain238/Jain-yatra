@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdfbf7;
+  --foreground: #2d2a26;
+  
+  --primary-saffron: #d97706;
+  --primary-saffron-hover: #b45309;
+  --primary-saffron-light: #fef3c7;
+  --primary-saffron-dark: #78350f;
+  
+  --accent-vermilion: #b91c1c;
+  --accent-vermilion-hover: #991b1b;
+  
+  --cream-50: #fdfbf7;
+  --cream-100: #faf7f0;
+  --cream-200: #f3ede2;
+  --cream-300: #e6dac6;
+  --cream-800: #4a4135;
+  --cream-900: #2d261d;
+  
+  --glass-bg: rgba(253, 251, 247, 0.7);
+  --glass-border: rgba(217, 119, 6, 0.15);
+}
+
+.dark {
+  --background: #0d0b09;
+  --foreground: #f5f2eb;
+  
+  --primary-saffron: #f59e0b;
+  --primary-saffron-hover: #d97706;
+  --primary-saffron-light: #2c1a04;
+  --primary-saffron-dark: #fef3c7;
+  
+  --accent-vermilion: #ef4444;
+  --accent-vermilion-hover: #dc2626;
+  
+  --cream-50: #1a1613;
+  --cream-100: #211c18;
+  --cream-200: #2c2520;
+  --cream-300: #42382f;
+  --cream-800: #ebd8c5;
+  --cream-900: #f5ece3;
+  
+  --glass-bg: rgba(13, 11, 9, 0.75);
+  --glass-border: rgba(245, 158, 11, 0.2);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-saffron-50: var(--cream-50);
+  --color-saffron-100: var(--primary-saffron-light);
+  --color-saffron-500: var(--primary-saffron);
+  --color-saffron-600: var(--primary-saffron-hover);
+  --color-saffron-900: var(--primary-saffron-dark);
+  
+  --color-vermilion-500: var(--accent-vermilion);
+  --color-vermilion-600: var(--accent-vermilion-hover);
+  
+  --color-cream-50: var(--cream-50);
+  --color-cream-100: var(--cream-100);
+  --color-cream-200: var(--cream-200);
+  --color-cream-300: var(--cream-300);
+  --color-cream-800: var(--cream-800);
+  --color-cream-900: var(--cream-900);
+  
+  --font-sans: var(--font-outfit), var(--font-geist-sans), sans-serif;
+  --font-serif: var(--font-cinzel), var(--font-playfair), serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-navbar {
+  background: rgba(253, 251, 247, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.dark .glass-navbar {
+  background: rgba(13, 11, 9, 0.85);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* Custom Scrollbar for elegant reading */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-saffron);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-saffron-hover);
+}
+
+/* Leaflet Map Premium Style Overrides */
+.leaflet-container {
+  background: var(--cream-100) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+  padding: 4px !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--background) !important;
+  border: 1px solid var(--glass-border) !important;
+}
+
+.leaflet-bar {
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.leaflet-bar a {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  transition: all 0.2s ease !important;
+}
+
+.leaflet-bar a:hover {
+  background-color: var(--primary-saffron-light) !important;
+  color: var(--primary-saffron-hover) !important;
+}
+
+/* Spiritual Glow Animation */
+@keyframes saffron-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(217, 119, 6, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(217, 119, 6, 0.5);
+  }
+}
+
+.glow-spiritual {
+  animation: saffron-glow 4s infinite ease-in-out;
+}
+
+/* Hero Gradient Overlay */
+.spiritual-gradient {
+  background: radial-gradient(circle at top, rgba(245, 158, 11, 0.15) 0%, transparent 60%);
+}
+
+.dark .spiritual-gradient {
+  background: radial-gradient(circle at top, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+}
