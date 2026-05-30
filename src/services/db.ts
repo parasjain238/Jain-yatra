@@ -75,13 +75,13 @@ const defaultSuggestions: CommunityUpdate[] = [
 ];
 
 if (!globalForDb.temples) {
-  const stored = loadFromStorage<Temple[] | null>("jain_yatra_temples", null);
+  const stored = loadFromStorage<Temple[] | null>("jain_yatra_temples_v2", null);
   if (stored) {
     // Merge: keep stored (to preserve edits/deletions), but add new mock temples
     const storedIds = new Set(stored.map((t: Temple) => t.id));
     const missingMocks = MOCK_TEMPLES.filter(t => !storedIds.has(t.id));
     globalForDb.temples = [...missingMocks, ...stored];
-    saveToStorage("jain_yatra_temples", globalForDb.temples);
+    saveToStorage("jain_yatra_temples_v2", globalForDb.temples);
   } else {
     globalForDb.temples = [...MOCK_TEMPLES];
   }
@@ -119,7 +119,7 @@ export const db = {
       id: `t-${Date.now()}`
     };
     globalForDb.temples.unshift(newTemple);
-    saveToStorage("jain_yatra_temples", globalForDb.temples);
+    saveToStorage("jain_yatra_temples_v2", globalForDb.temples);
     return newTemple;
   },
   
@@ -139,7 +139,7 @@ export const db = {
       ...globalForDb.temples[index],
       ...updates
     };
-    saveToStorage("jain_yatra_temples", globalForDb.temples);
+    saveToStorage("jain_yatra_temples_v2", globalForDb.temples);
     return globalForDb.temples[index];
   },
   
@@ -147,7 +147,7 @@ export const db = {
     const index = globalForDb.temples.findIndex(t => t.id === id);
     if (index === -1) return false;
     globalForDb.temples.splice(index, 1);
-    saveToStorage("jain_yatra_temples", globalForDb.temples);
+    saveToStorage("jain_yatra_temples_v2", globalForDb.temples);
     return true;
   },
 
@@ -193,7 +193,7 @@ export const db = {
         }
       } as Temple;
       globalForDb.temples.unshift(newTemple);
-      saveToStorage("jain_yatra_temples", globalForDb.temples);
+      saveToStorage("jain_yatra_temples_v2", globalForDb.temples);
     } else if (sug.update_type === "correction" && sug.temple_id) {
       await db.updateTemple(sug.temple_id, sug.details);
       // updateTemple already saves to storage
