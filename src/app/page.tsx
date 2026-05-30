@@ -445,16 +445,23 @@ export default function Home() {
             </div>
 
             {userLocation ? (
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-500 text-xs font-semibold">
-                <MapPin className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                <span>
-                  {locationSource === "gps" 
-                    ? `GPS Connected (Precise): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]` 
-                    : locationSource === "vercel"
-                    ? `Location via Vercel Edge (${locationCity || "Nearby"}): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]`
-                    : `Location via IP (${locationCity || "Nearby"}): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]`}
-                  {" • Temples sorted by nearest"}
-                </span>
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-500 text-xs font-semibold">
+                  <MapPin className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                  <span>
+                    {locationSource === "gps" 
+                      ? `GPS Connected (Precise): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]` 
+                      : locationSource === "vercel"
+                      ? `Location via Vercel Edge (${locationCity || "Nearby"}): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]`
+                      : `Location via IP (${locationCity || "Nearby"}): [${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}]`}
+                    {" • Temples sorted by nearest"}
+                  </span>
+                </div>
+                {locationSource !== "gps" && (
+                  <span className="text-[10px] text-cream-800 dark:text-cream-800/80 font-bold max-w-md animate-pulse">
+                    💡 City look off? Enable device location services in your OS settings, turn off VPN/hotspots, and click &quot;Use My Live Location&quot; above to scan precise GPS coordinates!
+                  </span>
+                )}
               </div>
             ) : locationError ? (
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-500 text-xs font-semibold max-w-md">
