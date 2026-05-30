@@ -88,12 +88,35 @@ export default function Home() {
     loadData();
   }, []);
 
-  // Silent fallback to IP Geolocation when browser GPS fails
-  const fetchIPLocation = async (): Promise<boolean> => {
-    console.log("Attempting IP-based geolocation fallback...");
+  // Silent fallback pipeline: Vercel Edge Headers API first, then client-side IP Geolocation APIs
+  const fetchVercelOrIPFallback = async (): Promise<boolean> => {
+    console.log("Attempting silent location fallbacks...");
     
-    // Attempt 1: ipapi.co (Primary, HTTPS secure)
+    // Fallback 1: Try Vercel Edge Headers Route
     try {
+      console.log("Fetching Vercel Edge location...");
+      const res = await fetch("/api/detect-location");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.latitude && data.longitude) {
+          const coords: [number, number] = [Number(data.latitude), Number(data.longitude)];
+          setUserLocation(coords);
+          setMapCenter(coords);
+          setMapZoom(11);
+          setLocationSource("vercel");
+          setLocationCity(data.city || data.region || "Nearby");
+          setLocationError(null);
+          console.log("Vercel Edge Geolocation succeeded:", data.city, coords);
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn("Vercel Edge location fetch failed, trying client IP APIs...", e);
+    }
+
+    // Fallback 2: Try ipapi.co (Client IP API 1)
+    try {
+      console.log("Fetching ipapi.co client location...");
       const res = await fetch("https://ipapi.co/json/");
       if (res.ok) {
         const data = await res.json();
@@ -110,11 +133,12 @@ export default function Home() {
         }
       }
     } catch (e) {
-      console.warn("Primary IP Geolocation (ipapi.co) failed, trying secondary:", e);
+      console.warn("ipapi.co client lookup failed, trying ipinfo.io...", e);
     }
 
-    // Attempt 2: ipinfo.io (Secondary, HTTPS secure, loc split)
+    // Fallback 3: Try ipinfo.io (Client IP API 2)
     try {
+      console.log("Fetching ipinfo.io client location...");
       const res = await fetch("https://ipinfo.io/json");
       if (res.ok) {
         const data = await res.json();
@@ -136,7 +160,7 @@ export default function Home() {
         }
       }
     } catch (e) {
-      console.error("Secondary IP Geolocation (ipinfo.io) also failed:", e);
+      console.error("All silent location fallbacks failed:", e);
     }
 
     return false;
@@ -147,46 +171,22 @@ export default function Home() {
     setLocationLoading(true);
     setLocationError(null);
 
-    // 1. If automatic detection (page load), try our fast Vercel edge header endpoint first
-    if (!isManual) {
-      try {
-        console.log("Checking Vercel Edge geolocation route...");
-        const res = await fetch("/api/detect-location");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.latitude && data.longitude) {
-            const coords: [number, number] = [Number(data.latitude), Number(data.longitude)];
-            setUserLocation(coords);
-            setMapCenter(coords);
-            setMapZoom(11);
-            setLocationSource("vercel");
-            setLocationCity(data.city || data.region || "Nearby");
-            setLocationLoading(false);
-            console.log("Resolved geolocation via Vercel Edge Headers:", coords);
-            return; // Successfully resolved!
-          }
-        }
-      } catch (e) {
-        console.warn("Vercel Edge location fetch error, falling back to browser GPS:", e);
-      }
-    }
-
-    // 2. Browser standard/high-precision Geolocation
+    // If browser doesn't support geolocation, trigger fallbacks immediately
     if (!navigator.geolocation) {
       setLocationError("Geolocation is not supported by your browser.");
-      await fetchIPLocation();
+      await fetchVercelOrIPFallback();
       setLocationLoading(false);
       return;
     }
 
-    // Setup options: force fresh high-accuracy chip lookup on manual clicks, standard cache on auto-loads
+    // Always try high accuracy to query device GPS chips/Wi-Fi positioning directly on first pop
     const options = {
-      enableHighAccuracy: isManual, 
-      timeout: 10000, // 10 seconds is plenty of time for user consent and locks
-      maximumAge: isManual ? 0 : 600000 // no cache for manual clicks to refresh "wrong location"
+      enableHighAccuracy: true,
+      timeout: 10000, // 10 seconds timeout gives ample time to review and accept the prompt
+      maximumAge: isManual ? 0 : 300000 // 5 minutes cache for auto-load, fresh override for manual clicks
     };
 
-    console.log(`Starting browser geolocation (HighAccuracy=${isManual})...`);
+    console.log(`Requesting browser GPS (isManual=${isManual})...`);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -202,15 +202,15 @@ export default function Home() {
         console.log("Browser Geolocation succeeded:", coords);
       },
       async (error) => {
-        console.warn("Browser Geolocation failed. Code:", error.code, "Message:", error.message);
+        console.warn("Browser Geolocation failed or denied. Code:", error.code, "Message:", error.message);
         
-        // Silently attempt IP geolocation fallback
-        const ipSuccess = await fetchIPLocation();
+        // Silently attempt pipeline fallback (Vercel Edge headers / IP lookup APIs)
+        const fallbackSuccess = await fetchVercelOrIPFallback();
         
-        if (!ipSuccess) {
+        if (!fallbackSuccess) {
           let errorMsg = "Unable to retrieve your location automatically. Please enable browser location permissions.";
           if (error.code === error.PERMISSION_DENIED) {
-            errorMsg = "Location permission denied. Please allow location access or type search terms.";
+            errorMsg = "Location permission denied. Please allow location access or search by state.";
           }
           setLocationError(errorMsg);
         }
