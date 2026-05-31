@@ -21,15 +21,20 @@ export default function Navbar() {
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const isAdmin = isLoaded && userEmail && adminEmails.includes(userEmail);
 
-  // Load temple stats and simulate live visits
+  // Load temple stats and authentic live visits
   useEffect(() => {
+    // 1. Fetch total authentic temples from DB
     db.getTemples().then(temples => setTotalTemples(temples.length));
 
-    // Simulate real-time visits incrementing
-    const interval = setInterval(() => {
-      setTotalVisits(prev => prev + Math.floor(Math.random() * 3));
-    }, 5000);
-    return () => clearInterval(interval);
+    // 2. Fetch real global visits from the Vercel KV database
+    fetch('/api/visits')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.visits) {
+          setTotalVisits(data.visits);
+        }
+      })
+      .catch(err => console.error("Error fetching live visits:", err));
   }, []);
 
   // Load and apply dark mode
