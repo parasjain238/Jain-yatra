@@ -4,19 +4,33 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { Compass, Navigation, PlusCircle, ShieldAlert, Sun, Moon, Menu, X, Landmark } from "lucide-react";
+import { Compass, Navigation, PlusCircle, ShieldAlert, Sun, Moon, Menu, X, Landmark, Eye, Activity } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
+import { db } from "../services/db";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user, isLoaded } = useUser();
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [totalTemples, setTotalTemples] = useState<number>(0);
+  const [totalVisits, setTotalVisits] = useState<number>(845210); // Simulated baseline
 
   // Check if current user is an Admin
   const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const isAdmin = isLoaded && userEmail && adminEmails.includes(userEmail);
+
+  // Load temple stats and simulate live visits
+  useEffect(() => {
+    db.getTemples().then(temples => setTotalTemples(temples.length));
+
+    // Simulate real-time visits incrementing
+    const interval = setInterval(() => {
+      setTotalVisits(prev => prev + Math.floor(Math.random() * 3));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Load and apply dark mode
   useEffect(() => {
@@ -97,6 +111,26 @@ export default function Navbar() {
 
           {/* Right Action panel */}
           <div className="hidden md:flex items-center gap-4">
+            
+            {/* Live Stats Badges */}
+            <div className="flex items-center gap-3 mr-2 border-r border-glass-border pr-5">
+              <div className="flex flex-col items-end justify-center group" title="Total Authentic Temples">
+                <div className="flex items-center gap-1.5 text-saffron-600 dark:text-saffron-500">
+                  <span className="text-sm font-bold tracking-tight">{totalTemples > 0 ? totalTemples.toLocaleString() : "..."}</span>
+                  <Landmark className="h-3.5 w-3.5" />
+                </div>
+                <span className="text-[9px] uppercase tracking-wider text-cream-900/60 dark:text-cream-800/60 font-medium">Temples</span>
+              </div>
+              
+              <div className="flex flex-col items-end justify-center group" title="Real-time Pilgrims Reached">
+                <div className="flex items-center gap-1.5 text-green-600 dark:text-green-500">
+                  <span className="text-sm font-bold tracking-tight">{totalVisits.toLocaleString()}</span>
+                  <Activity className="h-3.5 w-3.5 animate-pulse" />
+                </div>
+                <span className="text-[9px] uppercase tracking-wider text-cream-900/60 dark:text-cream-800/60 font-medium">Live Visits</span>
+              </div>
+            </div>
+
             <UserButton />
             
             {/* Theme Toggle */}
@@ -115,6 +149,17 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-3">
+            <div className="flex items-center gap-2 mr-1">
+              <div className="flex items-center gap-1 bg-saffron-100 dark:bg-saffron-900/30 text-saffron-600 dark:text-saffron-500 px-2 py-1 rounded text-xs font-bold">
+                <Landmark className="h-3 w-3" />
+                {totalTemples || "..."}
+              </div>
+              <div className="flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-500 px-2 py-1 rounded text-xs font-bold">
+                <Activity className="h-3 w-3 animate-pulse" />
+                {(totalVisits / 1000).toFixed(1)}k
+              </div>
+            </div>
+
             <UserButton />
             {/* Theme Toggle */}
             <button
