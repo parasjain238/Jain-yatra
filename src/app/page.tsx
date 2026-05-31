@@ -78,6 +78,12 @@ export default function Home() {
 
   // Active filters state
   const [activeFilters, setActiveFilters] = useState<FiltersState | null>(null);
+  const [visibleCount, setVisibleCount] = useState(50);
+  
+  // Reset visibility limit when filters change
+  useEffect(() => {
+    setVisibleCount(50);
+  }, [activeFilters, userLocation, temples.length]);
 
   // Load Temples from DB client
   useEffect(() => {
@@ -327,6 +333,9 @@ export default function Home() {
     });
   }, [temples, userLocation, activeFilters]);
 
+  // Virtualization / Pagination to fix DOM lagging
+  const displayedTemples = filteredAndSortedTemples.slice(0, visibleCount);
+
   // Handle direct state directory clicks
   const selectStateFilter = (stateName: string) => {
     setActiveFilters((prev) => {
@@ -502,7 +511,7 @@ export default function Home() {
 
             {/* Discoveries list box */}
             <div className="flex flex-col gap-4 pb-12">
-              {filteredAndSortedTemples.map((temple) => (
+              {displayedTemples.map((temple) => (
                 <TempleCard
                   key={temple.id}
                   temple={temple}
@@ -511,6 +520,15 @@ export default function Home() {
                   onSelect={() => handleTempleSelect(temple)}
                 />
               ))}
+
+              {visibleCount < filteredAndSortedTemples.length && (
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 50)}
+                  className="mx-auto mt-4 px-6 py-2.5 rounded-xl bg-cream-100 dark:bg-cream-900 text-cream-800 dark:text-cream-200 font-bold text-xs uppercase tracking-wider hover:bg-cream-200 dark:hover:bg-cream-800 transition-colors"
+                >
+                  Load More Temples ({filteredAndSortedTemples.length - visibleCount} remaining)
+                </button>
+              )}
 
               {filteredAndSortedTemples.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-2xl border border-dashed border-glass-border bg-cream-50/50">
@@ -527,7 +545,7 @@ export default function Home() {
           {/* Right panel: Sticky map layout (medium sized floating widget, sticky beside the entire list) */}
           <div className="lg:col-span-5 h-[400px] lg:h-[550px] sticky top-24 z-10 rounded-3xl overflow-hidden border border-glass-border shadow-lg">
             <Map
-              temples={filteredAndSortedTemples}
+              temples={displayedTemples}
               center={mapCenter}
               zoom={mapZoom}
               selectedTempleId={selectedTempleId}
