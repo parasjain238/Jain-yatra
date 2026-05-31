@@ -261,12 +261,12 @@ export default function AdminDashboard() {
     setAddress(t.address);
     setLat(t.latitude.toString());
     setLng(t.longitude.toString());
-    setPhone(t.phone);
-    setHistory(t.history);
-    setTimings(t.timings);
-    setMoolnayak(t.moolnayak);
-    setTrustName(t.trust_name);
-    setImageUrl(t.image_url);
+    setPhone(t.phone || "");
+    setHistory(t.history || "");
+    setTimings(t.timings || "");
+    setMoolnayak(t.moolnayak || "");
+    setTrustName(t.trust_name || "");
+    setImageUrl(t.image_url || "");
     setGoogleMapsLink("");
     setFacilities(t.facilities);
     setCrudModalOpen(true);

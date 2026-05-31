@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { MOCK_TEMPLES } = require('./src/services/mockData.js');
 
 const ALL_MP_DISTRICTS = [
   "Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", 
@@ -19,29 +20,7 @@ const DISTRICT_COORDS = {
 };
 
 async function main() {
-  const mockDataPath = 'src/services/mockData.ts';
-  const fileContent = fs.readFileSync(mockDataPath, 'utf8');
-  
-  // Find where the array starts and ends
-  const arrayStart = fileContent.indexOf('export const MOCK_TEMPLES: Temple[] = [');
-  if (arrayStart === -1) throw new Error("Could not find MOCK_TEMPLES array");
-  
-  const startIdx = fileContent.indexOf('[', arrayStart);
-  
-  // It ends at the very end of the file with `];`
-  const endRegex = /\n\];/;
-  const match = fileContent.match(endRegex);
-  if (!match) throw new Error("Could not find end of array");
-  const endIdx = match.index + 2;
-
-  const jsonString = fileContent.substring(startIdx, endIdx);
-  
-  let temples;
-  try {
-    temples = JSON.parse(jsonString);
-  } catch (e) {
-    throw new Error("Failed to parse MOCK_TEMPLES array: " + e.message);
-  }
+  const temples = MOCK_TEMPLES;
 
   console.log(`Initial total temples: ${temples.length}`);
   
@@ -133,11 +112,57 @@ async function main() {
   if (duplicatesRemoved > 0 || generated.length > 0) {
     const allFinalTemples = [...nonMPTemples, ...uniqueTemples];
     
-    const prefix = fileContent.substring(0, startIdx);
-    const newJson = JSON.stringify(allFinalTemples, null, 2);
-    const suffix = ';\n';
+    const fileContent = `export type TempleType = "Digambar" | "Shwetambar" | "Both";
+
+export interface FacilityInfo {
+  dharamshala_available: boolean;
+  bhojanshala_available: boolean;
+  parking_available: boolean;
+  ac_rooms_available: boolean;
+  family_rooms_available: boolean;
+  lift_available: boolean;
+  wheelchair_accessible: boolean;
+  drinking_water_available: boolean;
+  online_contact_available: boolean;
+}
+
+export interface Temple {
+  id: string;
+  temple_name: string;
+  temple_type: TempleType;
+  state: string;
+  city: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  phone?: string;
+  website?: string;
+  history?: string;
+  timings?: string;
+  moolnayak?: string;
+  trust_name?: string;
+  image_url?: string;
+  facilities: FacilityInfo;
+}
+
+export interface CommunityUpdate {
+  id: string;
+  temple_id?: string;
+  update_type: "correction" | "new_temple";
+  details: Partial<Temple>;
+  contributor_email: string;
+  contributor_name: string;
+  status: "pending" | "approved" | "rejected";
+  admin_feedback?: string;
+  created_at: string;
+}
+
+export const MOCK_TEMPLES: Temple[] = ${JSON.stringify(allFinalTemples, null, 2)};
+`;
     
-    fs.writeFileSync(mockDataPath, prefix + newJson + suffix);
+    fs.writeFileSync('src/services/mockData.ts', fileContent);
+    // Cleanup generated JS
+    fs.unlinkSync('./src/services/mockData.js');
     console.log("Successfully rewrote mockData.ts with deduplicated and complete MP data!");
   } else {
     console.log("MP Data is already perfect. No duplicates found, no missing districts.");

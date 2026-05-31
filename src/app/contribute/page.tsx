@@ -118,12 +118,12 @@ function ContributeForm() {
         setAddress(selected.address);
         setLat(selected.latitude.toString());
         setLng(selected.longitude.toString());
-        setPhone(selected.phone);
-        setHistory(selected.history);
-        setTimings(selected.timings);
-        setMoolnayak(selected.moolnayak);
-        setTrustName(selected.trust_name);
-        setImageUrl(selected.image_url);
+        setPhone(selected.phone || "");
+        setHistory(selected.history || "");
+        setTimings(selected.timings || "");
+        setMoolnayak(selected.moolnayak || "");
+        setTrustName(selected.trust_name || "");
+        setImageUrl(selected.image_url || "");
         setFacilities(selected.facilities);
       }
     } else if (formType === "new_temple") {
