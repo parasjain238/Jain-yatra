@@ -654,6 +654,9 @@ export default function Home() {
           <p className="text-xs text-cream-300 max-w-xl mx-auto font-medium leading-relaxed">
             JainYatra India is an open directory discovery platform built to assist travelers across India. We strictly do not provide booking portals. Please contact trust offices directly for rooms or Bhojanshala availability.
           </p>
+          <p className="text-xs text-cream-300 max-w-xl mx-auto font-bold tracking-wider uppercase mt-2">
+            Contact with Paras Jain: <a href="mailto:jainparas0987@gmail.com" className="text-saffron-500 hover:text-saffron-400 transition-colors lowercase">jainparas0987@gmail.com</a>
+          </p>
           <div className="border-t border-cream-800 dark:border-cream-900 pt-6 mt-6 flex flex-col sm:flex-row justify-between items-center text-[10px] text-cream-300 font-bold uppercase tracking-wider gap-4">
             <div>© {new Date().getFullYear()} JainYatra India. All Rights Reserved.</div>
             <div className="flex gap-4">
