@@ -28,6 +28,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
+import { Analytics } from "@vercel/analytics/react";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,6 +43,7 @@ export default function RootLayout({
       >
         <body className="min-h-full flex flex-col bg-background text-foreground animate-fade-in">
           {children}
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>

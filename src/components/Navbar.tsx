@@ -14,27 +14,16 @@ export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [totalTemples, setTotalTemples] = useState<number>(0);
-  const [totalVisits, setTotalVisits] = useState<number>(845210); // Simulated baseline
 
   // Check if current user is an Admin
   const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
   const userEmail = user?.primaryEmailAddress?.emailAddress?.toLowerCase();
   const isAdmin = isLoaded && userEmail && adminEmails.includes(userEmail);
 
-  // Load temple stats and authentic live visits
+  // Load temple stats
   useEffect(() => {
     // 1. Fetch total authentic temples from DB
     db.getTemples().then(temples => setTotalTemples(temples.length));
-
-    // 2. Fetch real global visits from the Vercel KV database
-    fetch('/api/visits')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.visits) {
-          setTotalVisits(data.visits);
-        }
-      })
-      .catch(err => console.error("Error fetching live visits:", err));
   }, []);
 
   // Load and apply dark mode
@@ -126,14 +115,6 @@ export default function Navbar() {
                 </div>
                 <span className="text-[9px] uppercase tracking-wider text-cream-900/60 dark:text-cream-800/60 font-medium">Temples</span>
               </div>
-              
-              <div className="flex flex-col items-end justify-center group" title="Real-time Pilgrims Reached">
-                <div className="flex items-center gap-1.5 text-green-600 dark:text-green-500">
-                  <span className="text-sm font-bold tracking-tight">{totalVisits.toLocaleString()}</span>
-                  <Activity className="h-3.5 w-3.5 animate-pulse" />
-                </div>
-                <span className="text-[9px] uppercase tracking-wider text-cream-900/60 dark:text-cream-800/60 font-medium">Live Visits</span>
-              </div>
             </div>
 
             <UserButton />
@@ -158,10 +139,6 @@ export default function Navbar() {
               <div className="flex items-center gap-1 bg-saffron-100 dark:bg-saffron-900/30 text-saffron-600 dark:text-saffron-500 px-2 py-1 rounded text-xs font-bold">
                 <Landmark className="h-3 w-3" />
                 {totalTemples || "..."}
-              </div>
-              <div className="flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-500 px-2 py-1 rounded text-xs font-bold">
-                <Activity className="h-3 w-3 animate-pulse" />
-                {(totalVisits / 1000).toFixed(1)}k
               </div>
             </div>
 
